@@ -1,0 +1,250 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" href="https://img.icons8.com/?size=100&id=53434&format=png&color=FFFFFF" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Roboto', sans-serif;
+        }
+        .custom-checkbox {
+            appearance: none;
+            background-color: #1e293b;
+            border: 2px solid #64748b;
+            border-radius: 0.25rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            display: inline-block;
+            position: relative;
+        }
+        .custom-checkbox:checked {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+        .custom-checkbox:checked::after {
+            content: '\2713';
+            font-size: 1rem;
+            color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #4f46e5 #1e293b;
+        }
+        .scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .scrollbar::-webkit-scrollbar-thumb {
+            background-color: #4f46e5;
+            border-radius: 10px;
+            border: 2px solid #1e293b;
+        }
+        .convert-button {
+            background-color: #4f46e5;
+            color: white;
+            font-weight: bold;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+        }
+        .convert-button:hover {
+            background-color: #3b82f6;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .copied {
+            background-color: #28a745; /* Green background */
+            color: white;
+            transform: scale(1.1); /* Slightly enlarge the button */
+            transition: transform 0.2s;
+        }
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-4xl p-6 bg-gray-800 rounded-lg shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center justify-center w-full">
+                <img src="https://img.icons8.com/?size=100&id=53434&format=png&color=FFFFFF" alt="Logo" class="w-10 h-10 mr-2">
+                <h1 class="text-2xl font-bold">String 2 Dataframe</h1>
+            </div>
+            <a href="https://github.com/elementrix05/string2df" target="_blank" class="text-gray-300 hover:text-gray-400">
+                <i class="fab fa-github text-2xl"></i>
+            </a>
+        </div>
+        <div class="mb-4">
+            <div class="flex justify-between items-center mb-1">
+                <label for="sourceCode" class="block text-lg font-medium">Source Code</label>
+                <button id="clearButton" class="w-24 px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg flex items-center"> <img src="https://img.icons8.com/?size=100&id=87107&format=png&color=FFFFFF" alt="Clear Logo" class="h-4 w-4 mr-2"> Clear</button>
+            </div>
+            <textarea id="sourceCode" rows="6" class="w-full p-4 text-gray-300 bg-gray-900 border border-gray-700 rounded-lg scrollbar" placeholder="// Paste your code here..."></textarea>
+        </div>
+        <div class="flex justify-between mb-4">
+            <div class="w-full pr-1 flex justify-center items-center">
+                <div class="w-full p-4 bg-gray-700 rounded-lg flex items-center">
+                    <input type="checkbox" id="pyspark" class="custom-checkbox">
+                    <label for="pyspark" class="ml-2 text-gray-300 flex items-center"> <img src="https://www.vectorlogo.zone/logos/apache_spark/apache_spark-icon.svg" alt="Spark Logo" class="h-5 w-5 mr-2"> Pyspark</label>
+                </div>
+            </div>
+            <div class="w-full pl-1 flex justify-center items-center">
+                <div class="w-full p-4 bg-gray-700 rounded-lg flex items-center">
+                    <input type="checkbox" id="pandas" class="custom-checkbox">
+                    <label for="pandas" class="ml-2 text-gray-300 flex items-center"> <img src="https://www.vectorlogo.zone/logos/python/python-icon.svg" alt="Python Logo" class="h-5 w-5 mr-2"> Pandas</label>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-center mb-4">
+            <button class="convert-button" id="convertButton">CONVERT</button>
+        </div>
+        <div class="mb-4">
+            <div class="flex justify-between items-center mb-1">
+                <label for="convertedCode" class="block text-lg font-medium">Converted Code</label>
+                <button id="copyButton" class="w-24 px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg flex items-center"> <img src="https://img.icons8.com/?size=100&id=86206&format=png&color=FFFFFF" alt="Copy Logo" class="h-4 w-4 mr-2"> Copy</button>
+            </div>
+            <textarea id="convertedCode" rows="6" class="w-full p-4 text-gray-300 bg-gray-900 border border-gray-700 rounded-lg scrollbar" placeholder="// Converted code will appear here..." readonly></textarea>
+        </div>
+        <div class="flex flex-col md:flex-row justify-between mt-8 gap-4">
+            <div class="w-full md:w-1/3 p-4 bg-gray-700 rounded-lg">
+                <i class="fas fa-bolt text-2xl text-purple-500"></i>
+                <h3 class="mt-2 text-lg font-bold">Instant Conversion</h3>
+                <p class="mt-1 text-sm text-gray-400">Instantly translate strings between multiple popular dataframes(pandas and pyspark).</p>
+            </div>
+            <div class="w-full md:w-1/3 p-4 bg-gray-700 rounded-lg">
+                <i class="fas fa-code text-2xl text-purple-500"></i>
+                <h3 class="mt-2 text-lg font-bold">Consistent Standardization</h3>
+                <p class="mt-1 text-sm text-gray-400">Ensures uniform DataFrame formats, maintaining data integrity for reliable analysis and processing.</p>
+            </div>
+            <div class="w-full md:w-1/3 p-4 bg-gray-700 rounded-lg">
+                <i class="fas fa-cogs text-2xl text-purple-500"></i>
+                <h3 class="mt-2 text-lg font-bold">Enhanced Efficiency</h3>
+                <p class="mt-1 text-sm text-gray-400">Streamlines conversion, allowing faster focus on data analysis.</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('clearButton').addEventListener('click', () => {
+            document.getElementById('sourceCode').value = '';
+
+            // Change button text and style
+            const button = document.getElementById('clearButton');
+            const originalText = button.childNodes[1].alt; // Store original text
+            button.childNodes[1].nextSibling.nodeValue = ' Cleared!'; // Change text to "Copied!"
+            button.classList.add('copied');
+
+            // Fade out effect
+            setTimeout(() => {
+                button.classList.add('fade-out');
+            }, 1000); // Wait 1 second before fading out
+
+            // Reset button after a delay
+            setTimeout(() => {
+                button.childNodes[1].nextSibling.nodeValue = ' Copy'; // Reset to original text
+                button.classList.remove('copied', 'fade-out');
+            }, 2000);
+            console.log('Textbox cleared!');
+
+        });
+
+        document.getElementById('convertButton').addEventListener('click', async () => {
+            const sourceCode = document.getElementById('sourceCode').value.trim();
+            const isPysparkChecked = document.getElementById('pyspark').checked;
+            const isPandasChecked = document.getElementById('pandas').checked;
+
+            if (!sourceCode) {
+                alert("Please paste dataframe string first then click convert");
+                return;
+            }
+
+            if (!isPysparkChecked && !isPandasChecked) {
+                alert("Please choose a language");
+                return;
+            }
+
+            const jsonData = {
+              data: sourceCode,
+              pysparkFlag: isPysparkChecked,
+              pandasFlag:  isPandasChecked
+
+
+            };
+
+            // Simulate a delay to prevent too many API requests
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Make an API request to the backend
+            try {
+                const response = await fetch('http://127.0.0.1:5000/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(jsonData)
+                });
+
+                const data = await response.json();
+                //document.getElementById('convertedCode').value = data.dataframe;
+                document.getElementById('convertedCode').textContent = data.dataframe;
+                console.log(data.dataframe)
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while converting the code.');
+            }
+        });
+
+        document.getElementById('copyButton').addEventListener('click', function() {
+            // Get the text area element
+            const textArea = document.getElementById('convertedCode');
+
+            // Select the text area content
+            textArea.select();
+            textArea.setSelectionRange(0, 99999); // For mobile devices
+
+            // Copy the selected text to the clipboard
+            navigator.clipboard.writeText(textArea.value)
+                .then(() => {
+                    // Change button text and style
+                    const button = document.getElementById('copyButton');
+                    const originalText = button.childNodes[1].alt; // Store original text
+                    button.childNodes[1].nextSibling.nodeValue = ' Copied!'; // Change text to "Copied!"
+                    button.classList.add('copied');
+
+                    // Fade out effect
+                    setTimeout(() => {
+                        button.classList.add('fade-out');
+                    }, 1000); // Wait 1 second before fading out
+
+                    // Reset button after a delay
+                    setTimeout(() => {
+                        button.childNodes[1].nextSibling.nodeValue = ' Copy'; // Reset to original text
+                        button.classList.remove('copied', 'fade-out');
+                    }, 2000);
+                    console.log('Text copied to clipboard!');
+                })
+                .catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+        });
+    </script>
+</body>
+</html>
